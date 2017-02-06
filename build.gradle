@@ -1,0 +1,97 @@
+buildscript {
+	repositories {
+		maven { url 'https://plugins.gradle.org/m2/' }
+	}
+}
+
+plugins {
+	id 'groovy'
+	id 'idea'
+	id 'java-gradle-plugin'
+	id 'com.gradle.plugin-publish' version '0.9.7'
+	id 'maven-publish'
+}
+
+repositories {
+	mavenLocal()
+	jcenter()
+}
+
+configurations.all {
+	resolutionStrategy {
+		failOnVersionConflict()
+	}
+}
+
+dependencies {
+	compile gradleApi()
+
+	compile 'ru.itbasis.gradle.plugins:java-plugin:0.3.4'
+	compile 'com.bmuschko:gradle-docker-plugin:latest.release'
+	compile 'org.springframework.boot:spring-boot-gradle-plugin:latest.release'
+
+	testCompile gradleTestKit()
+	testCompile 'junit:junit:latest.release'
+}
+
+ext {
+	javaVersion = '1.7'
+}
+
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+
+publishPlugins.dependsOn check
+publish.dependsOn check
+publishToMavenLocal.dependsOn check
+
+idea.project {
+	languageLevel = javaVersion
+}
+
+task sourceJar(type: Jar, group: 'build') {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+task testsJar(type: Jar, group: 'build') {
+	classifier = 'test-sources'
+	from sourceSets.test.allSource
+}
+
+artifacts {
+	archives jar, sourceJar, testsJar
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+
+			artifact sourceJar
+			artifact testsJar
+		}
+	}
+}
+
+pluginBundle {
+	website = project.url
+	vcsUrl = project.url + '.git'
+
+	description = project.description
+
+	mavenCoordinates {
+		groupId = project.group
+		artifactId = project.name
+		version = project.version
+	}
+
+	plugins {
+		dockerSpringBootPlugin {
+			id = project.group + '.' + project.name
+			displayName = project.description
+			tags = ['java', 'lombok', 'checkstyle', 'spring', 'spring-framework', 'spring-boot']
+			version = project.version
+		}
+	}
+}
