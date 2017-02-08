@@ -10,6 +10,7 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
 import ru.itbasis.gradle.plugins.java.JavaModulePlugin
 
 class DockerSpringBootPlugin implements Plugin<ProjectInternal> {
@@ -22,9 +23,10 @@ class DockerSpringBootPlugin implements Plugin<ProjectInternal> {
 		project.configure(project) {
 			project.plugins.apply(JavaModulePlugin.class)
 
-			project.plugins.apply('org.springframework.boot')
+			project.plugins.apply(SpringBootPlugin.class)
 			applyMavenBom(project)
 			applyBaseDependencies(project)
+			applyConfigurationProcessor(project)
 
 			project.plugins.apply(DockerTaskInjectorPlugin.class)
 			applyDocker(project)
@@ -33,12 +35,21 @@ class DockerSpringBootPlugin implements Plugin<ProjectInternal> {
 
 	private static applyBaseDependencies(ProjectInternal project) {
 		project.dependencies {
-			compile 'org.springframework.boot:spring-boot-starter-web'
-			compileOnly 'org.springframework.boot:spring-boot-configuration-processor'
-
 			testCompile 'junit:junit:latest.release'
 			testCompile('org.springframework.boot:spring-boot-starter-test')
 		}
+	}
+
+	private static applyConfigurationProcessor(ProjectInternal project) {
+		project.dependencies {
+			compileOnly('org.springframework.boot:spring-boot-configuration-processor')
+		}
+		project.afterEvaluate({
+			project.tasks
+			       .getByName('compileJava')
+			       .dependsOn(project.tasks
+			                         .getByName('processResources'))
+		})
 	}
 
 	private static applyMavenBom(ProjectInternal project) {
@@ -86,7 +97,7 @@ class DockerSpringBootPlugin implements Plugin<ProjectInternal> {
 				                                                 .majorVersion)
 		          ) as String)
 		project.logger.info('using docker base image: {}',
-		                     (task.instructions.find { e -> e instanceof Dockerfile.FromInstruction } as Dockerfile.FromInstruction).command)
+		                    (task.instructions.find { e -> e instanceof Dockerfile.FromInstruction } as Dockerfile.FromInstruction).command)
 
 		task.exposePort(8080)
 		task.copyFile('./apps', '/opt/apps/')
