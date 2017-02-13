@@ -1,16 +1,19 @@
 buildscript {
 	repositories {
+		mavenLocal()
 		maven { url 'https://plugins.gradle.org/m2/' }
+		jcenter()
+	}
+	dependencies{
+		classpath 'com.gradle.publish:plugin-publish-plugin:0.9.7'
 	}
 }
 
-plugins {
-	id 'groovy'
-	id 'idea'
-	id 'java-gradle-plugin'
-	id 'com.gradle.plugin-publish' version '0.9.7'
-	id 'maven-publish'
-}
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'com.gradle.plugin-publish'
+apply plugin: 'maven-publish'
 
 repositories {
 	mavenLocal()
@@ -26,7 +29,7 @@ configurations.all {
 dependencies {
 	compile gradleApi()
 
-	compile 'ru.itbasis.gradle.plugins:java-plugin:0.3.5'
+	compile 'ru.itbasis.gradle.plugins:java-plugin:latest.release'
 	compile 'com.bmuschko:gradle-docker-plugin:latest.release'
 	compile 'org.springframework.boot:spring-boot-gradle-plugin:latest.release'
 

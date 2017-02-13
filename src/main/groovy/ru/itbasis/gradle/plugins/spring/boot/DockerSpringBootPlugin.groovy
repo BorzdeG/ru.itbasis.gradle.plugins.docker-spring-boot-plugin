@@ -35,7 +35,6 @@ class DockerSpringBootPlugin implements Plugin<ProjectInternal> {
 
 	private static applyBaseDependencies(ProjectInternal project) {
 		project.dependencies {
-			testCompile 'junit:junit:latest.release'
 			testCompile('org.springframework.boot:spring-boot-starter-test')
 		}
 	}
