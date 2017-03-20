@@ -17,6 +17,7 @@ apply plugin: 'maven-publish'
 
 repositories {
 	mavenLocal()
+	maven { url 'https://plugins.gradle.org/m2/' }
 	jcenter()
 }
 
@@ -29,7 +30,7 @@ configurations.all {
 dependencies {
 	compile gradleApi()
 
-	compile 'ru.itbasis.gradle.plugins:java-plugin:latest.release'
+	compile 'ru.itbasis.gradle.plugins:java-plugin:0.5'
 	compile 'com.bmuschko:gradle-docker-plugin:latest.release'
 	compile 'org.springframework.boot:spring-boot-gradle-plugin:latest.release'
 
