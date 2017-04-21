@@ -30,7 +30,7 @@ configurations.all {
 dependencies {
 	compile gradleApi()
 
-	compile 'ru.itbasis.gradle.plugins:java-plugin:0.5'
+	compile 'ru.itbasis.gradle.plugins:java-plugin:0.5.1'
 	compile 'com.bmuschko:gradle-docker-plugin:latest.release'
 	compile 'org.springframework.boot:spring-boot-gradle-plugin:latest.release'
 
