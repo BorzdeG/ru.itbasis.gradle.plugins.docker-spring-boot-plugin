@@ -18,6 +18,9 @@ class DockerSpringBootPlugin implements Plugin<ProjectInternal> {
 
 	public static final String PROPERTY_DOCKER_IMAGE_JAVA = 'docker.image.java'
 
+	public static final String PROPERTY_SPRING_BOOT_VERSION = 'springBootVersion'
+	public static final String VERSION_LATEST_RELEASE = 'latest.release'
+
 	@Override
 	void apply(ProjectInternal project) {
 		project.configure(project) {
@@ -46,20 +49,19 @@ class DockerSpringBootPlugin implements Plugin<ProjectInternal> {
 		project.afterEvaluate({
 			project.tasks
 			       .getByName('compileJava')
-			       .dependsOn(project.tasks
-			                         .getByName('processResources'))
+			       .dependsOn(project.tasks.getByName('processResources'))
 		})
 	}
 
 	private static applyMavenBom(ProjectInternal project) {
-		final springBomDependencies = project.hasProperty('spring-boot.bom-dependencies') ? project.property('spring-boot.bom-dependencies') :
-		                              'spring-boot-dependencies'
-		final springBootVersion = project.hasProperty('spring-boot.version') ? project.property('spring-boot.version') :
-		                          JavaModulePlugin.VERSION_LATEST_RELEASE
+		final springBootVersion = project.hasProperty(PROPERTY_SPRING_BOOT_VERSION) ?
+			project.property(PROPERTY_SPRING_BOOT_VERSION) : (
+			project.hasProperty('spring-boot.version') ? project.property('spring-boot.version') : VERSION_LATEST_RELEASE
+		)
 
 		final dependencyManagementExtension = project.extensions.getByType(DependencyManagementExtension.class)
 		dependencyManagementExtension.imports({
-			mavenBom "org.springframework.boot:${springBomDependencies}:${springBootVersion}"
+			mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
 		})
 	}
 
@@ -91,7 +93,8 @@ class DockerSpringBootPlugin implements Plugin<ProjectInternal> {
 			          project.hasProperty(PROPERTY_DOCKER_IMAGE_JAVA)
 				          ? project.property(PROPERTY_DOCKER_IMAGE_JAVA)
 				          : ('anapsix/alpine-java:' + JavaVersion.toVersion((project.tasks
-				                                                                    .getByPath(JavaPlugin.COMPILE_JAVA_TASK_NAME) as JavaCompile)
+				                                                                    .getByPath(
+				          JavaPlugin.COMPILE_JAVA_TASK_NAME) as JavaCompile)
 					                                                            .sourceCompatibility)
 				                                                 .majorVersion)
 		          ) as String)

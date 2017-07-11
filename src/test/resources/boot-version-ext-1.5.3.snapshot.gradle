@@ -1,0 +1,14 @@
+buildscript {
+	repositories {
+		maven { url 'https://repo.spring.io/libs-snapshot' }
+	}
+	ext {
+		springBootVersion = '1.5.3.BUILD-SNAPSHOT'
+	}
+}
+plugins {
+	id 'ru.itbasis.gradle.plugins.docker-spring-boot-plugin'
+}
+repositories {
+	maven { url 'https://repo.spring.io/libs-snapshot' }
+}
