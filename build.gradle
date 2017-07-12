@@ -1,8 +1,6 @@
 buildscript {
 	repositories {
-		mavenLocal()
 		maven { url 'https://plugins.gradle.org/m2/' }
-		jcenter()
 	}
 	dependencies {
 		classpath 'com.gradle.publish:plugin-publish-plugin:0.9.7'
@@ -16,9 +14,8 @@ apply plugin: 'com.gradle.plugin-publish'
 apply plugin: 'maven-publish'
 
 repositories {
-	mavenLocal()
 	maven { url 'https://plugins.gradle.org/m2/' }
-	jcenter()
+//	jcenter()
 }
 
 configurations.all {
