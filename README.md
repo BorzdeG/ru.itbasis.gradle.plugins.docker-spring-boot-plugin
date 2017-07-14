@@ -1,4 +1,5 @@
 # Docker and Spring Boot module plugin
+[![Build status](https://travis-ci.org/BorzdeG/ru.itbasis.gradle.plugins.docker-spring-boot-plugin.svg?branch=master)](https://travis-ci.org/BorzdeG/ru.itbasis.gradle.plugins.docker-spring-boot-plugin)
 
 ## Introduction
 
