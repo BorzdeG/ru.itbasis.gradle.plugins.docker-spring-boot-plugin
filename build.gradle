@@ -8,78 +8,97 @@ buildscript {
 }
 
 apply plugin: 'groovy'
-apply plugin: 'idea'
 apply plugin: 'java-gradle-plugin'
-apply plugin: 'com.gradle.plugin-publish'
-apply plugin: 'maven-publish'
 
 repositories {
 	maven { url 'https://plugins.gradle.org/m2/' }
-//	jcenter()
 }
+
+ext {
+	springBootVersion = project.hasProperty('springBootVersion') ? project.property(
+		'springBootVersion') : 'latest.release'
+}
+logger.lifecycle('springBootVersion: ' + springBootVersion)
 
 configurations.all {
 	resolutionStrategy {
 		failOnVersionConflict()
 	}
+
+	resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+		if (details.requested.name == 'spring-boot-gradle-plugin') {
+			details.useVersion(springBootVersion)
+		}
+		if (details.requested.name == 'groovy-all') {
+			details.useVersion(GroovySystem.version)
+		}
+	}
 }
+
 
 dependencies {
 	compileOnly gradleApi()
 
 	compile 'ru.itbasis.gradle.plugins:java-plugin:0.5.1'
 	compile 'com.bmuschko:gradle-docker-plugin:latest.release'
-	compile 'org.springframework.boot:spring-boot-gradle-plugin:latest.release'
+	compile "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 
 	testCompile gradleTestKit()
 	testCompile 'junit:junit:latest.release'
 }
 
 ext {
-	javaVersion = '1.7'
+	javaVersion = JavaVersion.VERSION_1_7
 }
 
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 
-publishPlugins.dependsOn check
-publish.dependsOn check
-publishToMavenLocal.dependsOn check
+if (project == rootProject) {
+	apply plugin: 'idea'
+	apply plugin: 'com.gradle.plugin-publish'
+	apply plugin: 'maven-publish'
 
-idea.project {
-	languageLevel = javaVersion
-}
+	idea.project {
+		languageLevel = javaVersion
+	}
 
-artifacts {
-	archives jar
-}
+	artifacts {
+		archives jar
+	}
 
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			from components.java
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				from components.java
+			}
 		}
 	}
-}
 
-pluginBundle {
-	website = project.url
-	vcsUrl = project.url + '.git'
+	pluginBundle {
+		website = project.url
+		vcsUrl = project.url + '.git'
 
-	description = project.description
+		description = project.description
 
-	mavenCoordinates {
-		groupId = project.group
-		artifactId = project.name
-		version = project.version
-	}
-
-	plugins {
-		dockerSpringBootPlugin {
-			id = project.group + '.' + project.name
-			displayName = project.description
-			tags = ['java', 'spring', 'spring-framework', 'spring-boot']
+		mavenCoordinates {
+			groupId = project.group
+			artifactId = project.name
 			version = project.version
 		}
+
+		plugins {
+			dockerSpringBootPlugin {
+				id = project.group + '.' + project.name
+				displayName = project.description
+				tags = ['java', 'spring', 'spring-framework', 'spring-boot']
+				version = project.version
+			}
+		}
 	}
+
+	publishPlugins.dependsOn check
+	publish.dependsOn check
+	publishToMavenLocal.dependsOn check
+
 }
