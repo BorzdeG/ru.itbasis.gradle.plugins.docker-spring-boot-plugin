@@ -6,7 +6,7 @@ apply plugin: 'io.codearte.nexus-staging'
 
 uploadArchives.dependsOn check
 closeRepository.dependsOn uploadArchives
-publishPlugins.dependsOn 'sign', 'releaseRepository'
+publishPlugins.dependsOn 'closeAndReleaseRepository'
 
 idea {
 	project {

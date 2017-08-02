@@ -41,12 +41,10 @@ configurations.all {
 	}
 }
 
-
 dependencies {
 	compile 'ru.itbasis.gradle.plugins:java-module-gradle-plugin:latest.release'
 	compile "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 
-	testCompile gradleTestKit()
 	testCompile 'junit:junit:latest.release'
 	testCompile 'org.hamcrest:hamcrest-library:latest.release'
 }
