@@ -3,6 +3,7 @@ script: ./gradlew check
 matrix:
   include:
     - os: linux
+      dist: precise
       jdk: oraclejdk7
     - os: linux
       jdk: oraclejdk8
