@@ -4,5 +4,5 @@ buildscript{
 	}
 }
 plugins {
-	id 'ru.itbasis.gradle.plugins.docker-spring-boot-plugin'
+	id 'ru.itbasis.gradle.plugins.spring-boot-module-gradle-plugin'
 }

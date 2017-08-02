@@ -2,14 +2,16 @@ package ru.itbasis.gradle.plugins.spring.boot
 
 import org.gradle.internal.impldep.com.google.common.io.Files
 import org.gradle.testkit.runner.GradleRunner
+import org.hamcrest.core.IsNot
 import org.junit.Assert
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
-class DockerSpringBootPluginTest {
+import static org.junit.Assert.assertThat
+
+class SpringBootModulePluginTest {
 	@Rule
 	public final TemporaryFolder testProjectDir = new TemporaryFolder()
 	private GradleRunner gradleRunner
@@ -29,6 +31,7 @@ class DockerSpringBootPluginTest {
 		dirTestJava.mkdirs()
 		Files.copy(new File(this.class.classLoader.getResource('TestClass.java').toURI()),
 		           new File(dirTestJava, 'TestClass.java'))
+		new File(testProjectDir.root, 'src/test/resources').mkdirs()
 	}
 
 	private void copySampleFile(String fileNameFrom, String fileNameTo) {
@@ -41,7 +44,10 @@ class DockerSpringBootPluginTest {
 		copySampleFile('default.gradle', 'build.gradle')
 		final result = gradleRunner.withArguments('test')
 		                           .build()
-		Assert.assertFalse(result.output.contains('spring-boot-configuration-processor: -> 1.5.2.RELEASE'))
+		final output = result.output
+		assertThat(output, IsNot.not('spring-boot-configuration-processor: -> 1.5.2.RELEASE'))
+//		assertThat(output, stringContainsInOrder([':processResources', ':compileJava']))
+//		assertThat(output, stringContainsInOrder([':processTestResources', ':compileTestJava']))
 	}
 
 	@Test

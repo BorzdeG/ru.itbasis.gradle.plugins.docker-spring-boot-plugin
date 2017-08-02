@@ -1,11 +1,13 @@
-# Docker and Spring Boot module plugin
-[![Build status](https://travis-ci.org/BorzdeG/ru.itbasis.gradle.plugins.docker-spring-boot-plugin.svg?branch=master)](https://travis-ci.org/BorzdeG/ru.itbasis.gradle.plugins.docker-spring-boot-plugin)
+# Spring Boot module plugin
+[![Build status](https://travis-ci.org/itbasis/spring-boot-module-gradle-plugin.svg?branch=master)](https://travis-ci.org/itbasis/spring-boot-module-gradle-plugin)
 
 ## Introduction
 
-plugin apply Spring Boot plugin (`org.springframework.boot:spring-boot-gradle-plugin:latest.release`) and import as mavenBom `org.springframework.boot:spring-boot-dependencies`
+plugin apply Spring Boot plugin (`org.springframework.boot:spring-boot-gradle-plugin`) and import as mavenBom `org.springframework.boot:spring-boot-dependencies`
 
-Plugin append dependencies:
+If the `springBootVersion` property is not found in the project, then the `latest.release` value is used.
+
+## Plugin append dependencies:
 
 |scope|dependencies|
 |:---:|---|
@@ -15,7 +17,7 @@ Plugin append dependencies:
 The plugin explicitly indicates the dependency of the `compileJava` task on the `processResources`
 
 ## Using extends plugins
-[ru.itbasis.gradle.plugins:java-plugin](https://github.com/BorzdeG/ru.itbasis.gradle.plugins.java-plugin)
+[itbasis:java-module-gradle-plugin](https://github.com/itbasis/java-module-gradle-plugin)
 
 [Spring Boot Gradle plugin](https://plugins.gradle.org/plugin/org.springframework.boot)
 

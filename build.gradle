@@ -4,20 +4,23 @@ buildscript {
 	}
 	dependencies {
 		classpath 'com.gradle.publish:plugin-publish-plugin:0.9.7'
+		classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
+		classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.9.0'
 	}
 }
 
 apply plugin: 'groovy'
-apply plugin: 'java-gradle-plugin'
 
 repositories {
-	maven { url 'https://plugins.gradle.org/m2/' }
+	jcenter()
+	mavenCentral()
 }
 
 ext {
 	springBootVersion = project.hasProperty('springBootVersion') ? project.property(
 		'springBootVersion') : 'latest.release'
 }
+
 logger.lifecycle('springBootVersion: ' + springBootVersion)
 
 configurations.all {
@@ -32,19 +35,20 @@ configurations.all {
 		if (details.requested.name == 'groovy-all') {
 			details.useVersion(GroovySystem.version)
 		}
+		if (details.requested.group == 'org.hamcrest') {
+			details.useVersion('1.3')
+		}
 	}
 }
 
 
 dependencies {
-	compileOnly gradleApi()
-
-	compile 'ru.itbasis.gradle.plugins:java-plugin:0.5.1'
-	compile 'com.bmuschko:gradle-docker-plugin:latest.release'
+	compile 'ru.itbasis.gradle.plugins:java-module-gradle-plugin:latest.release'
 	compile "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 
 	testCompile gradleTestKit()
 	testCompile 'junit:junit:latest.release'
+	testCompile 'org.hamcrest:hamcrest-library:latest.release'
 }
 
 ext {
@@ -55,50 +59,5 @@ sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 
 if (project == rootProject) {
-	apply plugin: 'idea'
-	apply plugin: 'com.gradle.plugin-publish'
-	apply plugin: 'maven-publish'
-
-	idea.project {
-		languageLevel = javaVersion
-	}
-
-	artifacts {
-		archives jar
-	}
-
-	publishing {
-		publications {
-			mavenJava(MavenPublication) {
-				from components.java
-			}
-		}
-	}
-
-	pluginBundle {
-		website = project.url
-		vcsUrl = project.url + '.git'
-
-		description = project.description
-
-		mavenCoordinates {
-			groupId = project.group
-			artifactId = project.name
-			version = project.version
-		}
-
-		plugins {
-			dockerSpringBootPlugin {
-				id = project.group + '.' + project.name
-				displayName = project.description
-				tags = ['java', 'spring', 'spring-framework', 'spring-boot']
-				version = project.version
-			}
-		}
-	}
-
-	publishPlugins.dependsOn check
-	publish.dependsOn check
-	publishToMavenLocal.dependsOn check
-
+	apply from: 'gradle/publish.gradle'
 }
