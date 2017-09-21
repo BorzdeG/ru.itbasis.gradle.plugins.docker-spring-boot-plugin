@@ -1,6 +1,7 @@
 buildscript {
 	repositories {
 		maven { url 'https://plugins.gradle.org/m2/' }
+		mavenCentral()
 	}
 	dependencies {
 		classpath 'com.gradle.publish:plugin-publish-plugin:0.9.7'
@@ -10,17 +11,24 @@ buildscript {
 }
 
 apply plugin: 'groovy'
+apply plugin: 'idea'
 
 repositories {
-	jcenter()
 	mavenCentral()
 }
 
 ext {
+	javaVersion = JavaVersion.VERSION_1_7
 	springBootVersion = project.hasProperty('springBootVersion') ? project.property(
 		'springBootVersion') : 'latest.release'
 }
 
+idea {
+	module {
+		downloadSources = false
+		downloadJavadoc = false
+	}
+}
 logger.lifecycle('springBootVersion: ' + springBootVersion)
 
 configurations.all {
@@ -49,12 +57,10 @@ dependencies {
 	testCompile 'org.hamcrest:hamcrest-library:latest.release'
 }
 
-ext {
-	javaVersion = JavaVersion.VERSION_1_7
+tasks.withType(AbstractCompile).all {
+	sourceCompatibility = javaVersion.toString()
+	targetCompatibility = javaVersion.toString()
 }
-
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
 
 if (project == rootProject) {
 	apply from: 'gradle/publish.gradle'

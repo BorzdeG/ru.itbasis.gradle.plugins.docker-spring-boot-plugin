@@ -2,9 +2,8 @@ package ru.itbasis.gradle.plugins.spring.boot
 
 import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
 import org.gradle.api.Plugin
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.springframework.boot.gradle.plugin.SpringBootPlugin
 import ru.itbasis.gradle.plugins.java.JavaModulePlugin
 
@@ -34,12 +33,6 @@ class SpringBootModulePlugin implements Plugin<ProjectInternal> {
 		project.dependencies {
 			compileOnly('org.springframework.boot:spring-boot-configuration-processor')
 		}
-
-//		project.afterEvaluate({
-//			project.tasks
-//			       .getByName('compileJava')
-//			       .dependsOn(project.tasks.getByName('processResources'))
-//		})
 	}
 
 	private static applyMavenBom(ProjectInternal project) {
